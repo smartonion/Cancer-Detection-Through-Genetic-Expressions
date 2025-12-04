@@ -1,4 +1,4 @@
-#===============================================
+#========================================================
 # Big Picture: 
 # This model takes a gene expression dataset 
 # with a binary outcome (control vs cancer). Then 
@@ -8,7 +8,9 @@
 # a grid of lambda values, and a grid of alpha values,
 # 5-fold cross-validation, and uses classification error
 # to select the best model.
-#===============================================
+# Note: This was originally written in R. The python
+#       version showed better results on this dataset.
+#========================================================
 
 import pandas as pd
 import numpy as np
@@ -63,7 +65,7 @@ print(f"Confusion Matrix: \n{cm}")
 print(f"Error: {err:.4f}")
 print(f"Chosen alpha: {best_alpha:.4f}  lambda: {best_lambda:.3g}")
 
-# temporary code --------------------------------------------------------------
+# ------------------------------------------------------------------------------
 feature_names = gene.drop(columns=["class"]).columns.to_numpy()
 coefs = logistic_regression.coef_.ravel()
 classes = logistic_regression.classes_

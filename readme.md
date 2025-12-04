@@ -43,11 +43,13 @@ The features are highly dimensional and mostly only weakly correlated with each 
   - However, independence assumptions needed for Naïve Bayes are still not satisfied in a realistic way.
 
 ### Principal Component Analysis (PCA)
-
+![Correlation Analysis](images/Picture2.png)
+![Correlation Analysis](images/Picture3.png)
 - Performed PCA to explore low dimensional structure.
 - Findings:
   - No single low dimensional projection perfectly separates cancer from control.
   - High dimensionality and sparsity motivate:
+  ![Correlation Analysis](images/Picture4.png)
     - Strong regularization
     - Feature selection
     - Models that can handle many noisy predictors
@@ -69,7 +71,7 @@ The general workflow:
 5. Evaluate on the held out test data using accuracy, misclassification rate, F1, and sensitivity (for cancer).
 
 ### 1. Naïve Bayes
-
+![Correlation Analysis](images/Picture5.png)
 - Motivation: Very fast and simple baseline.
 - Assumption: Conditional independence of genes given the class.
 - Reality: Although pairwise correlations are small, genes are not truly independent in a way that supports a strong Naïve Bayes assumption in this setting.
@@ -82,7 +84,7 @@ The general workflow:
 This makes Naïve Bayes a useful baseline but not competitive for final model choice.
 
 ### 2. Linear SVM (Ridge style)
-
+![Correlation Analysis](images/Picture6.png)
 - Implementation: Linear SVM with ridge style penalty (as in `e1071` for R).
 - Experiments:
   - Attempt 1: Train only on the top 2 most informative genes.
@@ -101,7 +103,7 @@ This makes Naïve Bayes a useful baseline but not competitive for final model ch
 The SVM improves slightly over Naïve Bayes but does not fully solve the dimensionality and sparsity problem.
 
 ### 3. Elastic Net Logistic Regression
-
+![Correlation Analysis](images/Picture7.jpg)
 Elastic net logistic regression is the main model of interest in this project.
 
 - **Why elastic net**:
@@ -115,18 +117,20 @@ Elastic net logistic regression is the main model of interest in this project.
   - Elastic net penalty controlled by:
     - `alpha` (mixing parameter between L1 and L2)
     - `lambda` (overall regularization strength).
-  - Hyperparameters chosen by cross validation.
+  - Grid Search is utilized in finding the value of `alpha` by constructing a grid/sequence of candidates (eg. {0.01,0.1,0.5,1}).
+  - The most optimal model is chosen from the `(alpha,lambda)` pair that yields the highest mean cross-validated precision and recall.
 
 - **Key results from the slides**:
-  - Elastic net logistic regression selected a sparse model with **262 genes** having non zero coefficients.
+![Correlation Analysis](images/Picture9.png)
+  - Elastic net logistic regression selected a sparse model with **153 genes** having non zero coefficients.
   - Example influential genes:
-    - **Top positive gene**: `G1720`
-      - Log odds coefficient ≈ 0.1203
-      - Odds ratio ≈ 1.12
-      - Interpretation: each unit increase in expression of `G1720` is associated with about a 12 percent increase in the odds of being cancer, holding other genes fixed.
+    - **Top positive gene**: `G813`
+      - Log odds coefficient ≈ 0.1248
+      - Odds ratio ≈ 1.13
+      - Interpretation: each unit increase in expression of `G813` is associated with about a 13 percent increase in the odds of being cancer, holding other genes fixed.
     - **Top negative gene**: `G364`
-      - Log odds coefficient ≈ −0.1129
-      - Odds ratio ≈ 0.89
+      - Log odds coefficient ≈ −0.1010
+      - Odds ratio ≈ 0.90
       - Interpretation: each unit increase in `G364` is associated with about a 10 percent decrease in the odds of being cancer, holding other genes fixed.
   - The elastic net model provides a good tradeoff between accuracy and interpretability and is used as the final model.  
 
